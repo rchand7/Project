@@ -6,30 +6,32 @@ import userRoute from "./routes/userRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { app,server } from "./socket/socket.js";
-dotenv.config({});
+import { app, server } from "./socket/socket.js";
 
- 
+dotenv.config(); // Load environment variables
+
 const PORT = process.env.PORT || 5000;
 
 // middleware
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
 app.use(cookieParser());
-const corsOption={
-    origin:'http://localhost:3000',
-    credentials:true
-};
-app.use(cors(corsOption)); 
 
+const corsOptions = {
+    origin: 'http://localhost:3000', // Change this for production
+    credentials: true,
+};
+app.use(cors(corsOptions)); 
 
 // routes
-app.use("/api/v1/user",userRoute); 
-app.use("/api/v1/message",messageRoute);
- 
+app.use("/api/v1/user", userRoute); 
+app.use("/api/v1/message", messageRoute);
 
-server.listen(PORT, ()=>{
-    connectDB();
-    console.log(`Server listen at prot ${PORT}`);
+// Connect to MongoDB
+const db_url = process.env.MONGODB_URI; // Load from environment variables
+connectDB(db_url); // Ensure this function connects to your MongoDB
+
+// Start server after connecting to DB
+server.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
 });
-
